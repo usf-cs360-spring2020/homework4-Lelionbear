@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>HOMEWORK 4</title>
+
+    <!-- Load Bulma from CDN (consider saving it to repository instead) -->
+    <!-- https://bulma.io/ -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
+
+    <!-- Load Font Awesome 5 (free) icons -->
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+  </head>
+
+  <script>
+    $(function(){
+      $("#footer").load("footer.html");
+      $("#header").load("header.html");
+      $("#navbar").load("navbar.html");
+      $("#profile").load("profile.html");
+      $("#mobileResponsiveness").load("mobileResponsiveness.html");
+    });
+  </script>
+
+  <body>
+
+  <div id="header"></div>
+
+  <div id="navbar"></div>
+
+  <section class="section">
+    <div class="container">
+      <!-- <div class="content"> -->
+        <h1 class="title" align="center">
+          TODO TITLE
+        </h1>
+
+
+        <figure>
+          <svg width="960" height="600" id="vis_1"></svg>
+        </figure>
+        <figure>
+          <svg width="960" height="600" id="vis_2"></svg>
+        </figure>
+
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+
+        <script>
+
+
+        let file = "Fire_Department_Calls_for_Service.csv"
+        //d3.csv(file, dataload).then(dataprocess)
+
+        var width = 960;
+        var height = 500;
+        var pad = 14;
+        var diameter = Math.min(width, height);
+        var r = 5;
+
+        var numberFormat = d3.format(".2~s");
+
+        function drawLinks(g, links, generator) {
+          let paths = g.selectAll('path')
+            .data(links)
+            .enter()
+            .append('path')
+            .attr('d', generator)
+            .attr('class', 'link');
+        }
+
+        function drawNodes(g, nodes, raise) {
+          let circles = g.selectAll('circle')
+            .data(nodes, node => node.data.name)
+            .enter()
+            .append('circle')
+              .attr('r', d => d.r ? d.r : r)
+              .attr('cx', d => d.x)
+              .attr('cy', d => d.y)
+              .attr('id', d => d.data.name)
+              .attr('class', 'node')
+              .style('fill', d => color(d.depth));
+
+          setupEvents(g, circles, raise);
+        }
+
+        function setupEvents(g, selection, raise) {
+          selection.on('mouseover.highlight', function(d) {
+            // https://github.com/d3/d3-hierarchy#node_path
+            // returns path from d3.select(this) node to selection.data()[0] root node
+            let path = d3.select(this).datum().path(selection.data()[0]);
+
+            // select all of the nodes on the shortest path
+            let update = selection.data(path, node => node.data.key);
+
+            // highlight the selected nodes
+            update.classed('selected', true);
+
+            if (raise) {
+              update.raise();
+            }
+          });
+
+          selection.on('mouseout.highlight', function(d) {
+            let path = d3.select(this).datum().path(selection.data()[0]);
+            let update = selection.data(path, node => node.data.key);
+            update.classed('selected', false);
+          });
+
+          // show tooltip text on mouseover (hover)
+          selection.on('mouseover.tooltip', function(d) {
+            showTooltip(g, d3.select(this));
+          });
+
+          // remove tooltip text on mouseout
+          selection.on('mouseout.tooltip', function(d) {
+            g.select("#tooltip").remove();
+          });
+        }
+
+        function showTooltip(g, node) {
+          let gbox = g.node().getBBox();     // get bounding box of group BEFORE adding text
+          let nbox = node.node().getBBox();  // get bounding box of node
+
+          // calculate shift amount
+          let dx = nbox.width / 2;
+          let dy = nbox.height / 2;
+
+          // retrieve node attributes (calculate middle point)
+          let x = nbox.x + dx;
+          let y = nbox.y + dy;
+
+          // get data for node
+          let datum = node.datum();
+
+          // remove "java.base." from the node name
+          let name = datum.data.key; //.replace("java\.base\.", "");
+
+          // use node name and total size as tooltip text
+          let text = `${name} (${numberFormat(datum.data.total)}, ${numberFormat(datum.data.leaves)}n)`;
+
+          // create tooltip
+          let tooltip = g.append('text')
+            .text(text)
+            .attr('x', x)
+            .attr('y', y)
+            .attr('dy', -dy - 4) // shift upward above circle
+            .attr('text-anchor', 'middle') // anchor in the middle
+            .attr('id', 'tooltip');
+
+          // it is possible the tooltip will fall off the edge of the
+          // plot area. we can detect when this happens, and set the
+          // text anchor appropriately
+
+          // get bounding box for the text
+          let tbox = tooltip.node().getBBox();
+
+          // if text will fall off left side, anchor at start
+          if (tbox.x < gbox.x) {
+            tooltip.attr('text-anchor', 'start');
+            tooltip.attr('dx', -dx); // nudge text over from center
+          }
+          // if text will fall off right side, anchor at end
+          else if ((tbox.x + tbox.width) > (gbox.x + gbox.width)) {
+            tooltip.attr('text-anchor', 'end');
+            tooltip.attr('dx', dx);
+          }
+
+          // if text will fall off top side, place below circle instead
+          if (tbox.y < gbox.y) {
+            tooltip.attr('dy', dy + tbox.height);
+          }
+        }
+
+        // straightLine = {
+        //   let line = d3.line()
+        //     .curve(d3.curveLinear)
+        //     .x(d => d.x)
+        //     .y(d => d.y);
+        //
+        //   let generator = function(node) {
+        //     return line([node.source, node.target]);
+        //   }
+        //
+        //   return generator;
+        // }
+
+        // var curvedLine = {
+        //   let generator = d3.linkVertical()
+        //     .x(d => d.x)
+        //     .y(d => d.y);
+        //
+        //   return generator;
+        // }
+
+        let generator = d3.linkVertical()
+          .x(d => d.x)
+          .y(d => d.y);
+
+        // radialLine = {
+        //   let generator = d3.linkRadial()
+        //     .angle(d => d.theta + Math.PI / 2) // rotate, 0 angle is mapped differently here
+        //     .radius(d => d.radial);
+        //
+        //   return generator;
+        // }
+
+        function toCartesian(r, theta) {
+          return {
+            x: r * Math.cos(theta),
+            y: r * Math.sin(theta)
+          };
+        }
+
+        function toPolar(x, y) {
+          return {
+            r: Math.sqrt(x * x + y * y),
+            theta: Math.atan2(y, x)
+          };
+        }
+
+        function translate(x, y) {
+          return 'translate(' + String(x) + ',' + String(y) + ')';
+        }
+
+        var color;
+        var color_map;
+
+
+        d3.csv(file).then(dataprocess);
+
+        function dataprocess(data){
+          console.log(data[0]);
+
+          var nested_data = d3.nest()
+            .key(function(d) { return d["City"]; })
+            .key(function(d) { return d["Call Date"]; })
+            .key(function(d) { return d["Battalion"]; })
+            .rollup(function(leaves) { return leaves.length; })
+            .entries(data);
+
+          console.log(nested_data[0]);
+
+          var root = d3.hierarchy(nested_data[0], function(d) {
+            return d.values;
+          });
+
+          console.log(root);
+
+          // stfy = d3.stratify()
+          //   .id(function(row) { console.log(row); return row.values; })
+          //   .parentId(function(row) { return row.key; });
+
+          // stfy(nested_data[0]);
+
+          // java11 = {
+          root.count()
+          //
+          root.each(function(node) {
+            // copy this calculation since value is sometimes overwritten
+            node.data.leaves = node.value;
+          })
+          //
+          root.sum(row => row.size)
+          //
+          root.each(function(node) {
+            // copy this calculation since value is sometimes overwritten
+            node.data.total = node.value;
+          })
+          //
+          //   return root;
+          // }
+
+          color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
+
+          root.sort(function(a, b) {
+            return b.height - a.height || b.count - a.count;
+          });
+
+          makeDentree(root);
+          makeTreemap(root);
+        }
+
+        function makeDentree(root){
+          console.log("DENTREE");
+          // color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
+          //
+          // root.sort(function(a, b) {
+          //   return b.height - a.height || b.count - a.count;
+          // });
+
+          let layout = d3.cluster().size([2 * Math.PI, (diameter / 2) - pad]);
+
+          layout(root);
+
+          root.each(function(node) {
+            node.theta = node.x;
+            node.radial = node.y;
+
+            var point = toCartesian(node.radial, node.theta);
+            node.x = point.x;
+            node.y = point.y;
+          });
+
+          let svg = d3.select("body").select("svg#vis_1")
+              .style("width", width)
+              .style("height", height);
+
+          let plot = svg.append("g")
+            .attr("id", "plot")
+            .attr("transform", translate(width / 2, height / 2));
+
+          drawLinks(plot.append("g"), root.links(), generator);
+          drawNodes(plot.append("g"), root.descendants(), true);
+        }
+
+        function makeTreemap(root){
+          console.log("TREEMAP");
+          // color_map = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
+          //
+          // root.sort(function(a, b) {
+          //   return b.height - a.height || b.count - a.count;
+          // });
+
+          // make sure value is set
+          root.sum(d => d.size)
+
+          // layout based on width, height minus some padding
+          let layout = d3.treemap().padding(r).size([width - 2 * pad, height - 2 * pad]);
+
+          layout(root);
+
+          let svg = d3.select("body").select("sig#vis_2")
+              .style("width", width)
+              .style("height", height);
+
+          let plot = svg.append("g")
+            .attr("id", "plot")
+            .attr("transform", translate(pad, pad));
+
+          let rects = plot.selectAll("rect")
+            .data(root.descendants())
+            .enter()
+            .append("rect")
+            .attr("x", function(d) { return d.x0; })
+            .attr("y", function(d) { return d.y0; })
+            .attr("width", function(d) { return d.x1 - d.x0; })
+            .attr("height", function(d) { return d.y1 - d.y0; })
+            .attr("id", function(d) { return d.data.key; })
+            .attr("class", "node")
+            .style("fill", function(d) {return color(d.depth)});
+
+          setupEvents(plot, rects, false);
+        }
+
+
+
+
+        // function dataload(row)
+        // {
+        //   return row;
+        // }
+        //
+        // function dataprocess(dataset)
+        // {
+        //
+        //   console.log(dataset)
+        //   nodes = new Set(dataset.map(row => row["Call Number"]))
+        //   // parent id is City
+        //   // unque id
+        //   // Call Number,Unit ID,Incident Number,Call Type,Call Date,Watch Date,Received DtTm,Entry DtTm,Dispatch DtTm,Response DtTm,On Scene DtTm,Transport DtTm,Hospital DtTm,Call Final Disposition,Available DtTm,Address,City,Zipcode of Incident,Battalion,Station Area,Box,Original Priority,Priority,Final Priority,ALS Unit,Call Type Group,Number of Alarms,Unit Type,Unit sequence in call dispatch,Fire Prevention District,Supervisor District,Neighborhooods - Analysis Boundaries,Location,RowID
+        //   console.log(nodes)
+        //
+        //   processed = dataset.map(function(row) {
+        //   // get name of parent node
+        //   // let parent = row.name.substring(0, row.name.lastIndexOf("."));
+        //   let parent = row["City"]
+        //   //City » Battalion » Station  » Number of Calls
+        //
+        //   return {
+        //   call: row["Call Number"],
+        //   // if there isn't a parent node set the paren to java directly
+        //   parent: nodes.has(parent) || row["City"] === "San Francisco" ? parent : "San Francisco",
+        //   };
+        //   })
+        //
+        //   console.log(processed)
+        //
+        //   root = d3.stratify()
+        //   .id(function(row) { return row.call; })
+        //   .parentId(function(row) {
+        //     return row.parent;
+        //   })
+        //   (processed);
+        //
+        //   console.log(root)
+        //
+        //
+        //   // java11 = {
+        //   //   root.count()
+        //   //   root.each(function(node) {
+        //   //     // copy this calculation since value is sometimes overwritten
+        //   //     node.data.leaves = node.value;
+        //   //   })
+        //   //   root.sum(row => row.size)
+        //   //   root.each(function(node) {
+        //   //     // copy this calculation since value is sometimes overwritten
+        //   //     node.data.total = node.value;
+        //   //   })
+        //   //   return root;
+        //   // }
+        // }
+
+
+        // console.log(processed)
+
+
+        // dendrogram = {
+        //   // get selected subtree
+        //   let data = findModule();
+        //
+        //   // sort larger valued nodes first
+        //   data.sort(function(a, b) {
+        //     return b.height - a.height || b.count - a.count;
+        //   });
+        //
+        //   // size of layout will be width and height minus some padding
+        //   let layout = d3.cluster().size([width - 2 * pad, height - 2 * pad]);
+        //
+        //   // call layout to calculate (x, y) locations of nodes and sizes
+        //   layout(data);
+        //
+        //   // setup svg width and height
+        //   let svg = d3.select(DOM.svg(width, height))
+        //       .style("width", width)
+        //       .style("height", height);
+        //
+        //   // shift (0, 0) a little bit to leave some padding
+        //   let plot = svg.append("g")
+        //     .attr("id", "plot")
+        //     .attr("transform", translate(pad, pad));
+        //
+        //   // data.links() are all of the edges as an array
+        //   drawLinks(plot.append("g"), data.links(), straightLine);
+        //
+        //   // data.descendants() are all of the nodes as an array
+        //   drawNodes(plot.append("g"), data.descendants(), true);
+        //
+        //   return svg.node();
+        // }
+
+
+        </script>
+
+  <!--
+    hard-code the svg and various g layers so that even if the streets are loaded
+    and drawn last, they will still show up behind the symbols
+  -->
+
+
+  <!-- <h2 class="title" align="center" id="interactivity">Interactivity</h2>
+  <p>
+  For interactivity, I added both a tool tip and a filter of the vizulatization.
+  The tooltip allows users to select a circle and see the case information.
+  The tooltip pops up a small dialog of information such as date case was opened,
+  neighborhood, police district, catagory, request type, and status of the case.
+  For the filtering, I added a slider to filter out the date range a user wishes to see.
+  For instance, if you select a range of 12-24, the only circles shown will be the
+  cases opened on those selected dates (inclusive).
+  </p>
+
+  <h2 class="title" align="center" id="analysis">Analysis</h2>
+  <p>
+  For this Projected Visualization, I choose the Parking Enforcement catagory from the
+  "SF311 Cases" database of which I filtered only for the month of Feburary 2020.
+
+  I choose Parking Enforcement cases because I was interested to know where in the city
+  is the most active district. I was also interested in knowing if the number of cases
+  rises during a selective range of the month. So I was interested to learn the relation
+  of parking enforcement with the dates of the month. To visualize this each circle
+  represents an parking enforcement case and the tooltip displays more details while
+  the interactive filter limits the selected range of dates of the month.
+
+  From the projection, I found out that the most active district within the month
+  is at the interesction of three districts, South Market, Hayes Valley, and Mission.
+  This helped to visualize at least for the month of Feburary what districts are
+  most active during the month, and although not fully supported from this limited
+  data, the dates the enforcement is most active is within the last days of the month
+  and the start of the month.
+  </p> -->
+
+  <!-- <div id="profile"></div> -->
+
+  <!-- </div> -->
+  </div>
+  </section>
+
+
+  <div id="footer"></div>
+
+  <div id="mobileResponsiveness"></div>
+
+  </body>
+</html>
