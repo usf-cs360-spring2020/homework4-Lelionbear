@@ -43,19 +43,21 @@
         </p>
 
         <p>
-        This page consists of an overview of data collected for homework 3 from my Data Visualization class.
+        <!-- This page consists of an overview of data collected for homework 3 from my Data Visualization class.
         The home page also includes information about dataset used in the projected visualization.
         <br><br>
         For this homework assignment I visualized data from DataSF's 311 cases.
         I choose to select the "Blocked Street or Sidewalk" catagory to visualize the number of cases for the month of Feburary 2020.
-        With this collected data I created a projected visualization in d3.js (version 5).
+        With this collected data I created a projected visualization in d3.js (version 5). -->
         </p>
 
         <h2 id="data">Data</h2>
 
-        <p>The data set used was from <a href="https://data.sfgov.org/City-Infrastructure/311-Cases/vw6y-z8j6">"DataSF 311 Cases"</a>.
-        This dataset includes cases generally associated with a place or thing generally logged by a user regarding their own needs.
-        <br>The data collected for this assignment ranges only on the month of Feburary 2020.
+        <p>
+          The data set used was from <a href="https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3">"Fire Department Calls for Service"</a>.
+          This dataset includes cases generally associated with a place or thing generally logged by a user regarding their own needs.
+          <br>
+          The data collected for this assignment ranges only on the month of Feburary 2020.
         </p>
 
         <blockquote>
@@ -69,7 +71,7 @@
           </cite>
         </blockquote>
 
-        <table class="table is-warning is-narrow is-hoverable is-bordered">
+        <table class="table is-warning is-narrow is-bordered">
           <thead>
             <tr>
               <th>Catagory</th>
@@ -82,7 +84,7 @@
             <tr>
               <td>Abandoned Vehicle</td>
             </tr>
-            <tr class="is-selected">
+            <tr class="hero is-warning is-bold">
               <td>Blocked Street or Sidewalk</td>
             </tr>
             <tr>
@@ -171,9 +173,9 @@
         <p>Click below for the projected visualization made with D3.js (v5)</p>
 
         <p class="buttons">
-          <a class="button is-large is-success" href="sfMap.html">
+          <a class="button is-large is-success is-warning is-bold" href="visualization.html">
             <span class="icon is-medium">
-              <i class="fas fa-map-marked"></i>
+              <i class="fas fa-sitemap"></i>
             </span>
             <span>Projected Visualization</span>
           </a>
@@ -181,9 +183,12 @@
 
         <span class="heading">Acknowledgements</span>
         <p class="is-6">
-          <em>A lot of the code for these graphs came from Sophie Engle's class assignments and labs on block builder.</em><br>
-          <a href="https://bl.ocks.org/sjengle/2f6d4832397e3cdd78d735774cb5a4f2">Sophie Engle's SF Arrests Map template</a><br>
-          <a href="https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518">John Walley’s d3-simple-slider</a>
+          <em>A lot of the code for these graphs came from Sophie Engle's class assignments and labs on block builder. Additionally, help with D3's nests from PHeobe Bright's blocks link.</em><br>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-visualization">Sophie Engle's Java 11 API Hierarchy - Visualization</a>
+          <br>
+          <a href="https://observablehq.com/@sjengle/java-11-api-hierarchy-data-wrangling">Sophie Engle's Java 11 API Hierarchy - Data Wrangling</a>
+          <br>
+          <a href="http://bl.ocks.org/phoebebright/3176159">Pheobe Bright's D3 using nest on csv data</a>
         </p>
 
         <h2 id="grade">Grade</h2>
@@ -208,8 +213,9 @@
             <tr>
               <td>A</td>
               <td><i class="has-text-success fas fa-check-circle"></i></td>
-              <td>Projected Visualization with hover and filter interactivity in d3.js (v5)<br>
-              Note: hover interactivity is a little glitchy, user needs to use filter interactivity for hover interactivity to work. Posted a piazza post about this glitchy bug.</td>
+              <td>
+                Implement one node/link AND one space filling diagram with details-on-demand interactivity that have Brushing interactivity included.
+              </td>
             </tr>
           </tbody>
 

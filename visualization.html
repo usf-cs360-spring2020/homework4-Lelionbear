@@ -37,16 +37,23 @@
     <div class="container">
       <!-- <div class="content"> -->
         <h1 class="title" align="center">
-          TODO TITLE
+          Fire Department Calls for Service
         </h1>
 
 
-        <figure>
-          <svg width="960" height="600" id="vis_1"></svg>
-        </figure>
-        <figure>
-          <svg width="960" height="600" id="vis_2"></svg>
-        </figure>
+        <h2 class="title" align="center">Treemap Layout</h2>
+        <div align="center">
+          <figure>
+            <svg width="960" height="600" id="vis_1"></svg>
+          </figure>
+        </div>
+
+        <h2 class="title" align="center">Dentree Layout</h2>
+        <div align="center">
+          <figure>
+            <svg width="960" height="600" id="vis_2"></svg>
+          </figure>
+        </div>
 
         <script src="https://d3js.org/d3.v5.min.js"></script>
 
@@ -155,7 +162,8 @@
           let name = datum.data.key; //.replace("java\.base\.", "");
 
           // use node name and total size as tooltip text
-          let text = `${name} (${numberFormat(datum.data.total)}, ${numberFormat(datum.data.leaves)}n)`;
+          // let text = `${name} (${numberFormat(datum.data.total)}, ${numberFormat(datum.data.leaves)}n)`;
+          let text = `${name}`;
 
           // create tooltip
           let tooltip = g.append('text')
@@ -248,21 +256,24 @@
         d3.csv(file).then(dataprocess);
 
         function dataprocess(data){
+          console.log("data[0]");
           console.log(data[0]);
 
           var nested_data = d3.nest()
             .key(function(d) { return d["City"]; })
-            .key(function(d) { return d["Call Date"]; })
             .key(function(d) { return d["Battalion"]; })
+            .key(function(d) { return d["Station Area"]; })
             .rollup(function(leaves) { return leaves.length; })
             .entries(data);
 
+          console.log("nested_data[0]");
           console.log(nested_data[0]);
 
           var root = d3.hierarchy(nested_data[0], function(d) {
             return d.values;
           });
 
+          console.log("ROOT");
           console.log(root);
 
           color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
@@ -342,8 +353,6 @@
           let plot = svg.append("g")
             .attr("id", "plot")
             .attr("transform", translate(pad, pad));
-
-          console.log(root.descendants());
 
           let rects = plot.selectAll("rect")
             .data(root.descendants())
