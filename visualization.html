@@ -265,51 +265,41 @@
 
           console.log(root);
 
-          // color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
-
-          // makeTreemap(root);
-
-          // stfy = d3.stratify()
-          //   .id(function(row) { console.log(row); return row.values; })
-          //   .parentId(function(row) { return row.key; });
-
-          // stfy(nested_data[0]);
-
-          // java11 = {
-          root.count();
-          //
-          root.each(function(node) {
-            // copy this calculation since value is sometimes overwritten
-            node.data.leaves = node.value;
-          })
-          //
-          root.sum(row => row.values);
-          //
-          root.each(function(node) {
-            // copy this calculation since value is sometimes overwritten
-            node.data.total = node.value;
-          })
-          //
-          //   return root;
-          // }
+          color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
 
           root.sort(function(a, b) {
             return b.height - a.height || b.count - a.count;
           });
 
-          color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
+          root.sum(d => d.value);
 
-          makeDentree(root);
           makeTreemap(root);
-        }
 
-        function makeDentree(root){
-          console.log("DENTREE");
-          // color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
-          //
+          root.count();
+
+          root.each(function(node) {
+            // copy this calculation since value is sometimes overwritten
+           node.data.leaves = node.value;
+          })
+
+          //root.sum(row => row.values);
+
+          root.each(function(node) {
+            // copy this calculation since value is sometimes overwritten
+            node.data.total = node.value;
+          })
+
           // root.sort(function(a, b) {
           //   return b.height - a.height || b.count - a.count;
           // });
+
+
+          makeDentree(root);
+        }
+
+        function makeDentree(root){
+
+          console.log("DENTREE");
 
           let layout = d3.cluster().size([2 * Math.PI, (diameter / 2) - pad]);
 
@@ -337,15 +327,8 @@
         }
 
         function makeTreemap(root){
-          // color = d3.scaleSequential([root.height, 0], d3.interpolateViridis);
+
           console.log("TREEMAP");
-
-          // root.sort(function(a, b) {
-          //   return b.height - a.height || b.count - a.count;
-          // });
-
-          // make sure value is set
-          // root.sum(d => d.values);
 
           // layout based on width, height minus some padding
           let layout = d3.treemap().padding(r).size([width - 2 * pad, height - 2 * pad]);
@@ -360,7 +343,7 @@
             .attr("id", "plot")
             .attr("transform", translate(pad, pad));
 
-          // console.log(root.descendants());
+          console.log(root.descendants());
 
           let rects = plot.selectAll("rect")
             .data(root.descendants())
