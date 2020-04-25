@@ -43,12 +43,12 @@
         </p>
 
         <p>
-        <!-- This page consists of an overview of data collected for homework 3 from my Data Visualization class.
+        This page consists of an overview of data collected for homework 4 from my Data Visualization class.
         The home page also includes information about dataset used in the projected visualization.
         <br><br>
-        For this homework assignment I visualized data from DataSF's 311 cases.
-        I choose to select the "Blocked Street or Sidewalk" catagory to visualize the number of cases for the month of Feburary 2020.
-        With this collected data I created a projected visualization in d3.js (version 5). -->
+        For this homework assignment I visualized data from DataSF's Fire Department Calls for Service.
+        I choose to select three catagories: City, Neighborhooods - Analysis Boundaries, and Battalion.
+        With this collected data I created two visualizations in d3.js (version 5) that show hierarchy corelation withing the dataset.
         </p>
 
         <h2 id="data">Data</h2>
@@ -71,99 +71,149 @@
           </cite>
         </blockquote>
 
-        <table class="table is-warning is-narrow is-bordered">
+        <table class="table">
           <thead>
             <tr>
-              <th>Catagory</th>
+              <th class="is-bold is-warning">Column</th>
+              <th class="is-bold is-warning">Description</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>311 External Request</td>
+              <td>Call Number</td>
+              <td>A unique 9-digit number assigned by the 911 Dispatch Center (DEM) to this call. These number are used for both Police and Fire calls.</td>
             </tr>
             <tr>
-              <td>Abandoned Vehicle</td>
-            </tr>
-            <tr class="hero is-warning is-bold">
-              <td>Blocked Street or Sidewalk</td>
+              <td>Unit ID</td>
+              <td>Unit Identifier. For example E01 for Engine 1 or T01 for Truck 1.</td>
             </tr>
             <tr>
-              <td>Catch Basin Maintenance</td>
+              <td>Incident Number</td>
+              <td>A unique 8-digit number assigned by DEM to this Fire incident.</td>
             </tr>
             <tr>
-              <td>Color Curb</td>
+              <td>Call Type</td>
+              <td>Type of call the incident falls into. See the list below.</td>
             </tr>
             <tr>
-              <td>Construction Zone Permits</td>
+              <td>Call Date</td>
+              <td>Date the call is received at the 911 Dispatch Center. Used for reporting purposes.</td>
             </tr>
             <tr>
-              <td>Damaged Property</td>
+              <td>Watch Date</td>
+              <td>Watch date when the call is received. Watch date starts at 0800 each morning and ends at 0800 the next day.</td>
             </tr>
             <tr>
-              <td>DPW Volunteer Programs</td>
+              <td>Received DtTm</td>
+              <td>Date and time of call is received at the 911 Dispatch Center.</td>
             </tr>
             <tr>
-              <td>Encampments</td>
+              <td>Entry DtTm</td>
+              <td>Date and time the 911 operator submits the entry of the initical call information into the CAD system</td>
             </tr>
             <tr>
-              <td>Entertainment Commission</td>
+              <td>Dispatch DtTm</td>
+              <td>Date and time the 911 operator dispatches this unit to the call.</td>
             </tr>
             <tr>
-              <td>General Request (Multiple Agencies)</td>
+              <td>Response DtTm</td>
+              <td>Date and time this unit acknowledges the dispatch and records that the unit is en route to the location of the call.</td>
             </tr>
             <tr>
-              <td>Graffiti</td>
+              <td>On Scene DtTm</td>
+              <td>Date and time the unit records arriving to the location of the incident</td>
             </tr>
             <tr>
-              <td>Homeless Concerns</td>
+              <td>Transport DtTm</td>
+              <td>If this unit is an ambulance, date and time the unit begins the transport unit arrives to hospital</td>
             </tr>
             <tr>
-              <td>Illegal Postings</td>
+              <td>Hospital DtTm</td>
+              <td>If this unit is an ambulance, date and time the unit arrives to the hospital.</td>
             </tr>
             <tr>
-              <td>Litter Receptacles</td>
+              <td>Call Final Disposition</td>
+              <td>Disposition of the call (Code). For example TH2: Transport to Hospital - Code 2, FIR: Resolved by Fire Department</td>
             </tr>
             <tr>
-              <td>MUNI Feedback</td>
+              <td>Available DtTm</td>
+              <td>Date and time this unit is not longer assigned to this call and it is available for another dispatch.</td>
             </tr>
             <tr>
-              <td>Noise Report</td>
+              <td>Address</td>
+              <td>Address of midblock point associated with incident (obfuscated address to protect caller privacy)</td>
             </tr>
             <tr>
-              <td>Parking Enforcement</td>
+              <td class="is-bold is-warning">City</td>
+              <td class="is-bold is-warning">City of incident</td>
             </tr>
             <tr>
-              <td>Rec and Park Requests</td>
+              <td>Zipcode of Incident</td>
+              <td>Zipcode of incident</td>
             </tr>
             <tr>
-              <td>Residential Building Request</td>
+              <td class="is-bold is-warning">Battalion</td>
+              <td class="is-bold is-warning">Emergency Response District (There are 9 Fire Emergency Response Districts)</td>
             </tr>
             <tr>
-              <td>Sewer Issues</td>
+              <td>Station Area</td>
+              <td>Fire Station First Response Area associated with the address of the incident</td>
             </tr>
             <tr>
-              <td>SFHA Requests</td>
+              <td>Box</td>
+              <td>Fire box associated with the address of the incident. A box is the smallest area used to divide the City. Each box is associated with a unique unit dispatch order. The City is divided into more than 2,400 boxes.</td>
             </tr>
             <tr>
-              <td>Sidewalk or Curb</td>
+              <td>Original Priority</td>
+              <td>Initial call priority (Code 2: Non-Emergency or Code 3:Emergency).</td>
             </tr>
             <tr>
-              <td>Sign Repair</td>
+              <td>Priority</td>
+              <td>Call priority (Code 2: Non-Emergency or Code 3:Emergency).</td>
             </tr>
             <tr>
-              <td>Street and Sidewalk Cleaning</td>
+              <td>Final Priority</td>
+              <td>Final call priority (Code 2: Non-Emergency or Code 3:Emergency).</td>
             </tr>
             <tr>
-              <td>Street Defects</td>
+              <td>ALS Unit</td>
+              <td>Does this unit includes ALS (Advance Life Support) resources? Is there a paramedic in this unit?</td>
             </tr>
             <tr>
-              <td>Streetlights</td>
+              <td>Call Type Group</td>
+              <td>Call types are divided into four main groups: Fire, Alarm, Potential Life Threatening and Non Life Threatening.</td>
             </tr>
             <tr>
-              <td>Temporary Sign Request</td>
+              <td>Number of Alarms</td>
+              <td>Number of alarms associated with the incident. This is a number between 1 and 5.</td>
             </tr>
             <tr>
-              <td>Tree Maintenance</td>
+              <td>Unit Type</td>
+              <td>Unit type</td>
+            </tr>
+            <tr>
+              <td>Unit sequence in call dispatch</td>
+              <td>A number that indicates the order this unit was assigned to this call</td>
+            </tr>
+            <tr>
+              <td>Location</td>
+              <td>Latitude and longitude of address obfuscated either to the midblock, intersection or call box</td>
+            </tr>
+            <tr>
+              <td>Fire Prevention District</td>
+              <td>Bureau of Fire Prevention District associated with this address</td>
+            </tr>
+            <tr>
+              <td>Supervisor District</td>
+              <td>Supervisor District associated with this address</td>
+            </tr>
+            <tr>
+              <td class="is-bold is-warning">Neighborhoods - Analysis Boundaries</td>
+              <td class="is-bold is-warning">Neighborhood District associated with this address, boundaries available here: https://data.sfgov.org/d/p5b7-5n3h</td>
+            </tr>
+            <tr>
+              <td>RowID</td>
+              <td>Unique identifier used for managing data updates. It is the concatenation of Call Number and Unit ID separated by a dash</td>
             </tr>
           </tbody>
         </table>
@@ -177,7 +227,7 @@
             <span class="icon is-medium">
               <i class="fas fa-sitemap"></i>
             </span>
-            <span>Projected Visualization</span>
+            <span>Visualization</span>
           </a>
         </p>
 

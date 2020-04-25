@@ -47,7 +47,7 @@
             <svg width="960" height="600" id="vis_1"></svg>
           </figure>
         </div>
-
+        <br>
         <h2 class="title" align="center">Dentree Layout</h2>
         <div align="center">
           <figure>
@@ -55,13 +55,42 @@
           </figure>
         </div>
 
+        <br><br><br>
+
+        <h2 class="title" align="center" id="interactivity">Interactivity</h2>
+        <p align="center">
+        For interactivity, I added both a tool tip and brushing for both of the vizulatizations.
+        The tooltip allows users to hover at a child node (circle or rectangle) and see that node in other hierarichal parts of the visualization.
+        Additionally, the tooltip also pops up a small dialog of the catagory being highlighted, along the highlighted parent(s) that represents the hierarchy of the dataset.
+        For instance, if you hover a battalion the neighborhood and city become highlighted.
+        </p>
+
+        <h2 class="title" align="center" id="analysis">Analysis</h2>
+        <p align="center">
+        For these two visualizations, I created a hierarchy of nested nodes from
+        the "Fire Department Calls for Service" dataset to see correlations of the
+        month of Feburary 2020.
+
+        I choose three catagories: City, neighborhood, and Battalion.
+        I was interested in knowing the Battalions in the city and how often they
+        each respond to each neighborhood.
+
+        To visualize this each leaf node represents a Battalion and the tooltip
+        highlights the node and parents from the leaf along with other leaf nodes
+        of the same Battalion.
+
+        From these visualizations, I found that the Battalions each have their own
+        sector to respond although are not limited to a specific neighborhood.
+        This also shows that the most neighborhoods have at least one or more battalion
+        overlap as they would have to be in case of emergency reponse for a adjacent neighborhoods.
+        </p>
+
         <script src="https://d3js.org/d3.v5.min.js"></script>
 
         <script>
 
 
         let file = "Fire_Department_Calls_for_Service.csv"
-        //d3.csv(file, dataload).then(dataprocess)
 
         var width = 960;
         var height = 500;
@@ -261,8 +290,9 @@
 
           var nested_data = d3.nest()
             .key(function(d) { return d["City"]; })
+            // .key(function(d) { return d["Zipcode of Incident"]; })
+            .key(function(d) { return d["Neighborhooods - Analysis Boundaries"]; })
             .key(function(d) { return d["Battalion"]; })
-            .key(function(d) { return d["Station Area"]; })
             .rollup(function(leaves) { return leaves.length; })
             .entries(data);
 
@@ -369,141 +399,7 @@
           setupEvents(plot, rects, false);
         }
 
-
-
-
-        // function dataload(row)
-        // {
-        //   return row;
-        // }
-        //
-        // function dataprocess(dataset)
-        // {
-        //
-        //   console.log(dataset)
-        //   nodes = new Set(dataset.map(row => row["Call Number"]))
-        //   // parent id is City
-        //   // unque id
-        //   // Call Number,Unit ID,Incident Number,Call Type,Call Date,Watch Date,Received DtTm,Entry DtTm,Dispatch DtTm,Response DtTm,On Scene DtTm,Transport DtTm,Hospital DtTm,Call Final Disposition,Available DtTm,Address,City,Zipcode of Incident,Battalion,Station Area,Box,Original Priority,Priority,Final Priority,ALS Unit,Call Type Group,Number of Alarms,Unit Type,Unit sequence in call dispatch,Fire Prevention District,Supervisor District,Neighborhooods - Analysis Boundaries,Location,RowID
-        //   console.log(nodes)
-        //
-        //   processed = dataset.map(function(row) {
-        //   // get name of parent node
-        //   // let parent = row.name.substring(0, row.name.lastIndexOf("."));
-        //   let parent = row["City"]
-        //   //City » Battalion » Station  » Number of Calls
-        //
-        //   return {
-        //   call: row["Call Number"],
-        //   // if there isn't a parent node set the paren to java directly
-        //   parent: nodes.has(parent) || row["City"] === "San Francisco" ? parent : "San Francisco",
-        //   };
-        //   })
-        //
-        //   console.log(processed)
-        //
-        //   root = d3.stratify()
-        //   .id(function(row) { return row.call; })
-        //   .parentId(function(row) {
-        //     return row.parent;
-        //   })
-        //   (processed);
-        //
-        //   console.log(root)
-        //
-        //
-        //   // java11 = {
-        //   //   root.count()
-        //   //   root.each(function(node) {
-        //   //     // copy this calculation since value is sometimes overwritten
-        //   //     node.data.leaves = node.value;
-        //   //   })
-        //   //   root.sum(row => row.size)
-        //   //   root.each(function(node) {
-        //   //     // copy this calculation since value is sometimes overwritten
-        //   //     node.data.total = node.value;
-        //   //   })
-        //   //   return root;
-        //   // }
-        // }
-
-
-        // console.log(processed)
-
-
-        // dendrogram = {
-        //   // get selected subtree
-        //   let data = findModule();
-        //
-        //   // sort larger valued nodes first
-        //   data.sort(function(a, b) {
-        //     return b.height - a.height || b.count - a.count;
-        //   });
-        //
-        //   // size of layout will be width and height minus some padding
-        //   let layout = d3.cluster().size([width - 2 * pad, height - 2 * pad]);
-        //
-        //   // call layout to calculate (x, y) locations of nodes and sizes
-        //   layout(data);
-        //
-        //   // setup svg width and height
-        //   let svg = d3.select(DOM.svg(width, height))
-        //       .style("width", width)
-        //       .style("height", height);
-        //
-        //   // shift (0, 0) a little bit to leave some padding
-        //   let plot = svg.append("g")
-        //     .attr("id", "plot")
-        //     .attr("transform", translate(pad, pad));
-        //
-        //   // data.links() are all of the edges as an array
-        //   drawLinks(plot.append("g"), data.links(), straightLine);
-        //
-        //   // data.descendants() are all of the nodes as an array
-        //   drawNodes(plot.append("g"), data.descendants(), true);
-        //
-        //   return svg.node();
-        // }
-
-
         </script>
-
-  <!--
-    hard-code the svg and various g layers so that even if the streets are loaded
-    and drawn last, they will still show up behind the symbols
-  -->
-
-
-  <!-- <h2 class="title" align="center" id="interactivity">Interactivity</h2>
-  <p>
-  For interactivity, I added both a tool tip and a filter of the vizulatization.
-  The tooltip allows users to select a circle and see the case information.
-  The tooltip pops up a small dialog of information such as date case was opened,
-  neighborhood, police district, catagory, request type, and status of the case.
-  For the filtering, I added a slider to filter out the date range a user wishes to see.
-  For instance, if you select a range of 12-24, the only circles shown will be the
-  cases opened on those selected dates (inclusive).
-  </p>
-
-  <h2 class="title" align="center" id="analysis">Analysis</h2>
-  <p>
-  For this Projected Visualization, I choose the Parking Enforcement catagory from the
-  "SF311 Cases" database of which I filtered only for the month of Feburary 2020.
-
-  I choose Parking Enforcement cases because I was interested to know where in the city
-  is the most active district. I was also interested in knowing if the number of cases
-  rises during a selective range of the month. So I was interested to learn the relation
-  of parking enforcement with the dates of the month. To visualize this each circle
-  represents an parking enforcement case and the tooltip displays more details while
-  the interactive filter limits the selected range of dates of the month.
-
-  From the projection, I found out that the most active district within the month
-  is at the interesction of three districts, South Market, Hayes Valley, and Mission.
-  This helped to visualize at least for the month of Feburary what districts are
-  most active during the month, and although not fully supported from this limited
-  data, the dates the enforcement is most active is within the last days of the month
-  and the start of the month.
-  </p> -->
 
   <!-- <div id="profile"></div> -->
 
